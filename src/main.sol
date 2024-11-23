@@ -9,19 +9,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /// @title CryptoFoods
 /// @notice A contract for managing soulbound tokens with scores
 contract CryptoFoods is ERC1155, ERC1155Burnable, Ownable {
-
     ///////////////////////////////////////////////////////////////////
     /// @notice STRUCTS, MAPPINGS, and STATE VARIABLES
     ///////////////////////////////////////////////////////////////////
 
     struct TokenInfo {
         string metadataURI; // Metadata URI for the token
-        uint256 score;      // Score associated with the token
+        uint256 score; // Score associated with the token
     }
 
     mapping(uint256 => TokenInfo) public tokenInfo; // Token details for each tokenId
-    mapping(address => uint256) public userScores;  // Total score for each user
-    uint256 public currentTokenId;                 // Tracks the latest tokenId
+    mapping(address => uint256) public userScores; // Total score for each user
+    uint256 public currentTokenId; // Tracks the latest tokenId
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /// @notice EVENTS
@@ -45,10 +44,7 @@ contract CryptoFoods is ERC1155, ERC1155Burnable, Ownable {
     /// @param metadataURI The URI for the token's metadata
     /// @param score The score associated with the token
     /// @return tokenId The ID of the newly created token
-    function createToken(
-        string memory metadataURI, 
-        uint256 score
-    ) external onlyOwner returns (uint256) {
+    function createToken(string memory metadataURI, uint256 score) external onlyOwner returns (uint256) {
         currentTokenId++;
 
         tokenInfo[currentTokenId] = TokenInfo(metadataURI, score);
@@ -61,11 +57,7 @@ contract CryptoFoods is ERC1155, ERC1155Burnable, Ownable {
     /// @param to The recipient of the token
     /// @param tokenId The ID of the token to mint
     /// @param amount The number of tokens to mint
-    function mint(
-        address to,
-        uint256 tokenId,
-        uint256 amount
-    ) external onlyOwner {
+    function mint(address to, uint256 tokenId, uint256 amount) external onlyOwner {
         require(bytes(tokenInfo[tokenId].metadataURI).length > 0, "Token ID does not exist");
         _mint(to, tokenId, amount, "");
 
@@ -126,11 +118,11 @@ contract CryptoFoods is ERC1155, ERC1155Burnable, Ownable {
     }
 
     /// @notice Prevent batch burning
-    function burnBatch(
-        address, /*account*/
-        uint256[] memory, /*ids*/
-        uint256[] memory /*values*/
-    ) public virtual override {
+    function burnBatch(address, /*account*/ uint256[] memory, /*ids*/ uint256[] memory /*values*/ )
+        public
+        virtual
+        override
+    {
         revert("Tokens cannot be burned in batch");
     }
 
