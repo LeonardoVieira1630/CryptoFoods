@@ -12,3 +12,28 @@ docs/
 
 # Dotenv file
 .env
+
+# Coverage
+coverage/
+coverage.json
+lcov.info
+
+# Node modules (if you're using npm/yarn)
+node_modules/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Debug files
+*.log
+
+# Local hardhat files
+artifacts/
+typechain-types/
