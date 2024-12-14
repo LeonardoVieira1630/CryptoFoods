@@ -33,8 +33,29 @@ contract CryptoFoods is ERC1155, ERC1155Burnable, Ownable {
     /// @notice CONSTRUCTOR
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// @param baseURI Base URI for metadata
-    constructor(string memory baseURI) ERC1155(baseURI) Ownable(msg.sender) {}
+    constructor() ERC1155("https://ipfs.io/ipfs/QmR4zPgakFphHvojPz2iKWoBiQzwMttWaCDXBM7zkX9d1K/{id}.json") Ownable(msg.sender) {
+        // Create and mint the initial three tokens
+        string[3] memory uris = [
+            "https://ipfs.io/ipfs/QmR4zPgakFphHvojPz2iKWoBiQzwMttWaCDXBM7zkX9d1K/1.json",
+            "https://ipfs.io/ipfs/QmR4zPgakFphHvojPz2iKWoBiQzwMttWaCDXBM7zkX9d1K/2.json",
+            "https://ipfs.io/ipfs/QmR4zPgakFphHvojPz2iKWoBiQzwMttWaCDXBM7zkX9d1K/3.json"
+        ];
+        
+        uint256[3] memory scores = [uint256(100), uint256(100), uint256(150)]; // Define scores for each token
+        
+        for (uint256 i = 0; i < 3; i++) {
+            currentTokenId++;
+            
+            // Create token
+            tokenInfo[currentTokenId] = TokenInfo(uris[i], scores[i]);
+            emit TokenCreated(currentTokenId, uris[i]);
+            
+            // Mint token
+            _mint(msg.sender, currentTokenId, 1, "");
+            userScores[msg.sender] += scores[i];
+            emit TokenMinted(msg.sender, currentTokenId, 1, scores[i]);
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /// @notice TOKEN MANAGEMENT FUNCTIONS
@@ -124,6 +145,14 @@ contract CryptoFoods is ERC1155, ERC1155Burnable, Ownable {
         override
     {
         revert("Tokens cannot be burned in batch");
+    }
+
+    /// @notice Override the uri function to return the correct metadata URI for each token
+    /// @param tokenId The ID of the token
+    /// @return The metadata URI for the token
+    function uri(uint256 tokenId) public view virtual override returns (string memory) {
+        require(bytes(tokenInfo[tokenId].metadataURI).length > 0, "URI query for nonexistent token");
+        return tokenInfo[tokenId].metadataURI;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
